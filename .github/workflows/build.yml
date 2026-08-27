@@ -1,0 +1,28 @@
+name: Build Dylib
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-13
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Theos
+      run: |
+        git clone --recursive https://github.com/theos/theos.git ~/theos
+        echo "THEOS=~/theos" >> $GITHUB_ENV
+
+    - name: Build Tweak
+      run: |
+        make FINALPACKAGE=1
+
+    - name: Upload dylib
+      uses: actions/upload-artifact@v4
+      with:
+        name: WelcomeASDev-dylib
+        path: .theos/obj/debug/*.dylib
